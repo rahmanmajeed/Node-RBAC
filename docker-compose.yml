@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  app:
+    image: "access_control_node:latest"
+    build: 
+      dockerfile: Dockerfile
+
+    container_name: node-acl
+    ports:
+      - "49160:8080"
+volumes:
+  node-acl:
