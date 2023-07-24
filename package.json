@@ -2,11 +2,10 @@
   "name": "node-rbac",
   "version": "1.0.0",
   "description": "this is simple role-based-access control system using node.js",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "start:js": "nodemon index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
   },
   "repository": "http://github.com",
