@@ -1,4 +1,6 @@
 import express, { Request, Response } from "express";
+import 'dotenv/config'
+
 // Constants
 const PORT = 8080;
 const HOST = "0.0.0.0";
