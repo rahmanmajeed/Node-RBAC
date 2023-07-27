@@ -12,10 +12,12 @@
   "author": "rahman majeed <rahmanmajeed46@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@typegoose/typegoose": "^11.4.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.1",
     "typescript": "^5.1.6"
   },
   "devDependencies": {
