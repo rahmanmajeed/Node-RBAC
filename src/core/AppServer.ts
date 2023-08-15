@@ -1,11 +1,15 @@
 import * as dotenv from "dotenv";
-import express, { Express } from "express";
+import express, { Express, Request, Response } from "express";
 import { IServer } from "../interfaces/IServer";
-import BaseRouter from "../routes/base.route";
 import AuthRouter from "../routes/auth.route";
+import BaseRouter from "../routes/base.route";
+import { UserRoutes } from "../routes/user.routes";
+import { BaseRoute } from "./Route";
+import mongo from "../database/mongo";
 dotenv.config();
 class AppServer implements IServer {
   app: Express;
+  routes: Array<BaseRoute> = [];
 
   private static instance: AppServer;
 
@@ -27,6 +31,17 @@ class AppServer implements IServer {
     this.app.set("host", process.env.APPLICATION_HOST);
     this.app.use("/", new BaseRouter().router);
     this.app.use("/api/auth", new AuthRouter().router);
+    this.routes.push(new UserRoutes(this.app));
+
+    /**
+     * @health checker routes.
+     */
+    this.app.get("/hello", (req: Request, res: Response) => {
+      res.send("Express + TypeScript Server");
+    });
+    this.app.get("/health", (req: Request, res: Response) => {
+      res.send("health checking...");
+    });
   }
   server(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
@@ -44,6 +59,7 @@ class AppServer implements IServer {
   async start() {
     // server start...
     await this.server();
+    await mongo.connect();
     return {
       express: this.app,
     };
