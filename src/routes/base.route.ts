@@ -9,11 +9,6 @@ export default class BaseRouter implements IRouter {
   }
 
   protected registerRoutes(): void {
-    this.router.get("/hello", (req: Request, res: Response) => {
-      res.send("Express + TypeScript Server");
-    });
-    this.router.get("health", (req: Request, res: Response) => {
-      res.send("health checking...");
-    });
+
   }
 }
