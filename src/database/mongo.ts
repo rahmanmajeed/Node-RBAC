@@ -11,16 +11,16 @@ class MongoDB extends ServiceConnector {
     this.options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
+      // useCreateIndex: true,
       serverSelectionTimeoutMS: 5000,
-      useFindAndModify: false,
+      // useFindAndModify: false,
     };
     this.retrySeconds = 5;
   }
 
   async connect() {
     try {
-        await mongoose.connect(this.url);
+        await mongoose.connect(this.url, this.options);
         console.log("database connected...");
       } catch (error: any) {
         console.log(error.message);
