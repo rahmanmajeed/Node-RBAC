@@ -1,11 +1,11 @@
 import * as dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
+import mongo from "../database/mongo";
 import { IServer } from "../interfaces/IServer";
 import AuthRouter from "../routes/auth.route";
 import BaseRouter from "../routes/base.route";
 import { UserRoutes } from "../routes/user.routes";
 import { BaseRoute } from "./Route";
-import mongo from "../database/mongo";
 dotenv.config();
 class AppServer implements IServer {
   app: Express;
@@ -29,6 +29,8 @@ class AppServer implements IServer {
   config(): void {
     this.app.set("port", process.env.APPLICATION_PUBLISH_PORT);
     this.app.set("host", process.env.APPLICATION_HOST);
+    this.app.use(express.json({ limit: "10kb" }));
+    this.app.use(express.urlencoded({ extended: false }));
     this.app.use("/", new BaseRouter().router);
     this.app.use("/api/auth", new AuthRouter().router);
     this.routes.push(new UserRoutes(this.app));
@@ -42,6 +44,25 @@ class AppServer implements IServer {
     this.app.get("/health", (req: Request, res: Response) => {
       res.send("health checking...");
     });
+
+    // UnKnown Routes
+    this.app.all("*", (req: Request, res: Response, next: NextFunction) => {
+      const err = new Error(`Route ${req.originalUrl} not found`) as any;
+      err.statusCode = 404;
+      next(err);
+    });
+    // Global Error Handler
+    this.app.use(
+      (err: any, req: Request, res: Response, next: NextFunction) => {
+        err.status = err.status || "error";
+        err.statusCode = err.statusCode || 500;
+
+        res.status(err.statusCode).json({
+          status: err.status,
+          message: err.message,
+        });
+      }
+    );
   }
   server(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
