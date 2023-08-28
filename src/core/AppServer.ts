@@ -5,6 +5,7 @@ import { IServer } from "../interfaces/IServer";
 import AuthRouter from "../routes/auth.route";
 import BaseRouter from "../routes/base.route";
 import { UserRoutes } from "../routes/user.routes";
+import Exception from "./Exception";
 import { BaseRoute } from "./Route";
 dotenv.config();
 class AppServer implements IServer {
@@ -44,6 +45,18 @@ class AppServer implements IServer {
     this.app.get("/health", (req: Request, res: Response) => {
       res.send("health checking...");
     });
+
+    /**
+     * Generic error route health check
+     */
+    this.app.get(
+      "/error",
+      (req: Request, res: Response, next: NextFunction) => {
+        next(new Exception("health-error", 200, "Test Error health !!!", true));
+        // or
+        // next(new ErrorException(ErrorCode.Unauthenticated))
+      }
+    );
 
     // UnKnown Routes
     this.app.all("*", (req: Request, res: Response, next: NextFunction) => {
