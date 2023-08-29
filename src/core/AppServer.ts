@@ -7,6 +7,7 @@ import BaseRouter from "../routes/base.route";
 import { UserRoutes } from "../routes/user.routes";
 import Exception from "./Exception";
 import { BaseRoute } from "./Route";
+import errorHandler from "../middleware/errorHandler";
 dotenv.config();
 class AppServer implements IServer {
   app: Express;
@@ -58,6 +59,7 @@ class AppServer implements IServer {
       }
     );
 
+    this.app.use(errorHandler)
     // UnKnown Routes
     this.app.all("*", (req: Request, res: Response, next: NextFunction) => {
       const err = new Error(`Route ${req.originalUrl} not found`) as any;
