@@ -20,11 +20,14 @@ class MongoDB extends ServiceConnector {
 
   async connect() {
     try {
-        await mongoose.connect(this.url, this.options);
-        console.log("database connected...");
-      } catch (error: any) {
-        console.log(error.message);
-      }
+      await mongoose.connect(this.url, this.options);
+      console.log("database connected...");
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  }
+  reConnect() {
+    return mongoose.connection.on("disconnected", this.connect);
   }
 }
 
