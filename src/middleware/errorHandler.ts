@@ -38,12 +38,13 @@ function errorHandler(
   }
 
   // logg the error
-  console.error(err);
+  // console.error(err);
   // other custom behaviors...
 
   // return the standard error response
   res.status(httpStatusCode).send({
     error: {
+      code: httpStatusCode,
       message: message,
       timestamp: err.timestamp || undefined,
       documentationUrl: err.documentationUrl || undefined,
