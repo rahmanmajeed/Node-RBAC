@@ -1,6 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import Authentication from "../core/Authentication";
 import Env from "../core/Env";
+import { findUser } from "../services/user.service";
 
 class JWT extends Authentication {
   constructor(publicKey: string, privateKey: string) {
@@ -38,10 +39,33 @@ class JWT extends Authentication {
    */
   public verifyToken<T>(token: string): T | null {
     try {
-      return jwt.verify(token, this.getPublicKey()) as T;
+      const decoded = jwt.verify(token, this.getPublicKey());
+      return { valid: true, expired: false, decoded } as T;
     } catch (error) {
-      return null;
+      return { valid: false, expired: true, decoded: null } as T;
     }
+  }
+
+  public async reIssueAccessToken(refreshToken: string) {
+    try {
+      const { decoded }: any = this.verifyToken(refreshToken);
+
+      if (!decoded) {
+        return false;
+      }
+      //session check
+      //user check
+
+      const user = await findUser({ _id: decoded.user });
+      if (!user) return false;
+
+      const accessToken = this.signToken(
+        { ...user, session: decoded._id },
+        { expiresIn: `${15}m` }
+      );
+  
+      return accessToken;
+    } catch (error) {}
   }
 }
 
