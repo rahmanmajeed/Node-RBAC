@@ -111,6 +111,12 @@ export class User extends Document {
   @prop({ required: true, minlength: 8, maxLength: 32, select: false })
   password: string;
 
+  @prop({default:true})
+  isTwoFA: boolean;
+
+  @prop()
+  secretKey: string;
+
   @prop({ default: "user" })
   role: string;
 
