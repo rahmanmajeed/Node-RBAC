@@ -5,7 +5,9 @@ import { findUser } from "../services/user.service";
 
 class JWT extends Authentication {
   constructor(publicKey: string, privateKey: string) {
-    super(publicKey, privateKey);
+    super();
+    this.publicKey = this.setPublicKey(publicKey);
+    this.privateKey = this.setPrivateKey(privateKey);
   }
 
   /**
