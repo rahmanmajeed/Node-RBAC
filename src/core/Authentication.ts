@@ -5,8 +5,7 @@
 
 import { authOptions } from "../types/TAuth";
 
-
-abstract class Authentication {
+abstract class Authentication<T> {
   protected publicKey: string;
   protected privateKey: string;
   protected options: authOptions = {
@@ -43,8 +42,8 @@ abstract class Authentication {
    * getPrivateKey
    */
 
-  protected getPublicKey(){
-     return this.publicKey;
+  protected getPublicKey() {
+    return this.publicKey;
   }
 
   /**
@@ -62,30 +61,46 @@ abstract class Authentication {
   protected getPrivateKey() {
     return this.privateKey;
   }
-  //### v2 authentication class###
+  /*
+  ########################### 
+    version 2.0 authentication
+  #############################
+  */
+
+  /**
+   * @method digestOptions
+   * @param {options}
+   * @return {options}
+   *
+   *
+   */
+  protected digestOptions(options: Partial<T>): Partial<T> {
+    return (this.options = options);
+  }
   /**
    * @method signAuthToken
-   * @param {payload, ?options}
+   * @param {payload}
+   * @param {options} optional
    * @return {string}
    */
-  //  protected abstract signAuthToken(payload: Object, options?: Object): string;
+  protected abstract signAuthToken(payload: Object, options?: Object): string;
 
   /**
    * @method verifyAuthToken
    * @param {token}
    * @return {<T> | null}
    */
-  //  protected abstract verifyAuthToken<T>(token: string): T | null;
-
+  protected abstract verifyAuthToken<T>(token: string): T | null;
 
   /**
-   * @key read by buffer
-   * @param {key}
-   * @return {key}
+   * @readKeyFromBuffer
+   * @param {key} string
+   * @param {key} BufferEncoding
+   * @return {key} key|null
    */
 
-  private readKeyFromBuffer(key: string) {
-    return key ? Buffer.from(key, "base64").toString("ascii") : "";
+  private readKeyFromBuffer(key: string, encoding: BufferEncoding = "base64") {
+    return key ? Buffer.from(key, encoding).toString("ascii") : "";
   }
 }
 

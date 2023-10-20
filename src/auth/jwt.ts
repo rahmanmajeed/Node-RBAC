@@ -1,9 +1,10 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt, { SignOptions, sign, verify } from "jsonwebtoken";
 import Authentication from "../core/Authentication";
 import Env from "../core/Env";
+import { IAuth } from "../interfaces/IAuth";
 import { findUser } from "../services/user.service";
 
-class JWT extends Authentication {
+class JWT extends Authentication<IAuth> {
   constructor(publicKey: string, privateKey: string) {
     super();
     this.publicKey = this.setPublicKey(publicKey);
@@ -65,9 +66,50 @@ class JWT extends Authentication {
         { ...user, session: decoded._id },
         { expiresIn: `${15}m` }
       );
-  
+
       return accessToken;
     } catch (error) {}
+  }
+
+  /**
+   * ----------------------------------------------
+   *  V2 Jwt re-construct
+   * ----------------------------------------------
+   */
+
+  /**
+   * @param {}
+   */
+
+  public signJwt(payload: Object, options: SignOptions) {
+    return this.signAuthToken(payload, options);
+  }
+
+  protected signAuthToken(
+    payload: Object,
+    options?: Object | undefined
+  ): string {
+    try {
+      return sign(payload, this.privateKey, {
+        ...(options && options),
+        algorithm: "RS256",
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public verifyJwt<T>(token: string): T | null {
+    return this.verifyAuthToken(token);
+  }
+
+  protected verifyAuthToken<T>(authtoken: string): T | null {
+    try {
+      const decoded = verify(authtoken, this.publicKey);
+      return decoded as T;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

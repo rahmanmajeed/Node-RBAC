@@ -2,12 +2,12 @@ import * as dotenv from "dotenv";
 import express, { Express, NextFunction, Request, Response } from "express";
 import mongo from "../database/mongo";
 import { IServer } from "../interfaces/IServer";
+import errorHandler from "../middleware/errorHandler";
 import AuthRouter from "../routes/auth.route";
 import BaseRouter from "../routes/base.route";
 import { UserRoutes } from "../routes/user.routes";
 import Exception from "./Exception";
 import { BaseRoute } from "./Route";
-import errorHandler from "../middleware/errorHandler";
 dotenv.config();
 class AppServer implements IServer {
   app: Express;
@@ -59,7 +59,7 @@ class AppServer implements IServer {
       }
     );
 
-    this.app.use(errorHandler)
+    this.app.use(errorHandler);
     // UnKnown Routes
     this.app.all("*", (req: Request, res: Response, next: NextFunction) => {
       const err = new Error(`Route ${req.originalUrl} not found`) as any;
